@@ -184,7 +184,7 @@ const SportsMatchDetailPage = () => {
                 )}
                 <ShareButton
                   title={match.title}
-                  text={`Watch ${match.title} on SanuFlix`}
+                  text={`Watch ${match.title} on Ocinema`}
                   url={window.location.href}
                 />
               </div>

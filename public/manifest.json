@@ -1,6 +1,6 @@
 {
-  "name": "SanuFlix",
-  "short_name": "SanuFlix",
+  "name": "Ocinema",
+  "short_name": "Ocinema",
   "description": "Stream your favorite movies and TV shows",
   "start_url": "/",
   "display": "standalone",

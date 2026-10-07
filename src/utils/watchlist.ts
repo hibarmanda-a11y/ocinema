@@ -1,4 +1,6 @@
-const WATCHLIST_KEY = 'sanuflix_watchlist'
+import { getBrandStorageItem, setBrandStorageItem } from './brandStorage'
+
+const WATCHLIST_KEY = 'watchlist'
 
 export interface WatchlistItem {
   id: number
@@ -13,7 +15,7 @@ export interface WatchlistItem {
 
 export const getWatchlist = (): WatchlistItem[] => {
   try {
-    const stored = localStorage.getItem(WATCHLIST_KEY)
+    const stored = getBrandStorageItem(WATCHLIST_KEY)
     return stored ? JSON.parse(stored) : []
   } catch (error) {
     console.error('Failed to get watchlist:', error)
@@ -42,7 +44,7 @@ export const addToWatchlist = (item: any, mediaType: 'movie' | 'tv'): void => {
     }
 
     watchlist.unshift(newItem) // Add to beginning
-    localStorage.setItem(WATCHLIST_KEY, JSON.stringify(watchlist))
+    setBrandStorageItem(WATCHLIST_KEY, JSON.stringify(watchlist))
     
     // Dispatch custom event for UI updates
     window.dispatchEvent(new CustomEvent('watchlist-updated'))
@@ -55,7 +57,7 @@ export const removeFromWatchlist = (id: number, mediaType: 'movie' | 'tv'): void
   try {
     const watchlist = getWatchlist()
     const filtered = watchlist.filter(item => !(item.id === id && item.mediaType === mediaType))
-    localStorage.setItem(WATCHLIST_KEY, JSON.stringify(filtered))
+    setBrandStorageItem(WATCHLIST_KEY, JSON.stringify(filtered))
     
     // Dispatch custom event for UI updates
     window.dispatchEvent(new CustomEvent('watchlist-updated'))
@@ -83,4 +85,3 @@ export const toggleWatchlist = (item: any, mediaType: 'movie' | 'tv'): boolean =
     return true
   }
 }
-

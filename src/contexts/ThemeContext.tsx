@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import { getBrandStorageItem, setBrandStorageItem } from '../utils/brandStorage'
 
 type ThemeMode = 'dark' | 'light' | 'auto'
 type EffectiveTheme = 'dark' | 'light'
@@ -18,30 +19,30 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
-const THEME_STORAGE_KEY = 'sanuflix_theme'
-const COLOR_THEME_STORAGE_KEY = 'sanuflix_color_theme'
-const EFFECTS_STORAGE_KEY = 'sanuflix_effects_enabled'
+const THEME_STORAGE_KEY = 'theme'
+const COLOR_THEME_STORAGE_KEY = 'color_theme'
+const EFFECTS_STORAGE_KEY = 'effects_enabled'
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setThemeState] = useState<ThemeMode>(() => {
-    const stored = localStorage.getItem(THEME_STORAGE_KEY)
+    const stored = getBrandStorageItem(THEME_STORAGE_KEY)
     return (stored as ThemeMode) || 'dark'
   })
 
   const [colorTheme, setColorThemeState] = useState<ColorTheme>(() => {
-    const stored = localStorage.getItem(COLOR_THEME_STORAGE_KEY)
+    const stored = getBrandStorageItem(COLOR_THEME_STORAGE_KEY)
     return (stored as ColorTheme) || 'hotpink'
   })
 
   const [effectsEnabled, setEffectsEnabledState] = useState<boolean>(() => {
     // Auto-disable on mobile devices by default for better performance
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768
-    const stored = localStorage.getItem(EFFECTS_STORAGE_KEY)
+    const stored = getBrandStorageItem(EFFECTS_STORAGE_KEY)
     return stored !== null ? stored === 'true' : !isMobile
   })
 
   const [seasonalEnabled, setSeasonalEnabledState] = useState<boolean>(() => {
-    const stored = localStorage.getItem('sanuflix_seasonal_enabled')
+    const stored = getBrandStorageItem('seasonal_enabled')
     return stored !== null ? stored === 'true' : true
   })
 
@@ -137,22 +138,22 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 
   const setTheme = (newTheme: ThemeMode) => {
     setThemeState(newTheme)
-    localStorage.setItem(THEME_STORAGE_KEY, newTheme)
+    setBrandStorageItem(THEME_STORAGE_KEY, newTheme)
   }
 
   const setColorTheme = (newTheme: ColorTheme) => {
     setColorThemeState(newTheme)
-    localStorage.setItem(COLOR_THEME_STORAGE_KEY, newTheme)
+    setBrandStorageItem(COLOR_THEME_STORAGE_KEY, newTheme)
   }
 
   const setEffectsEnabled = (enabled: boolean) => {
     setEffectsEnabledState(enabled)
-    localStorage.setItem(EFFECTS_STORAGE_KEY, String(enabled))
+    setBrandStorageItem(EFFECTS_STORAGE_KEY, String(enabled))
   }
 
   const setSeasonalEnabled = (enabled: boolean) => {
     setSeasonalEnabledState(enabled)
-    localStorage.setItem('sanuflix_seasonal_enabled', String(enabled))
+    setBrandStorageItem('seasonal_enabled', String(enabled))
   }
 
   return (
@@ -181,4 +182,3 @@ export const useTheme = () => {
   }
   return context
 }
-

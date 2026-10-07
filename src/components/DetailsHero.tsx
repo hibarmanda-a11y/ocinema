@@ -204,7 +204,7 @@ export const DetailsHero = ({
 
                                     <ShareButton
                                         title={title}
-                                        text={`Check out ${title} on SanuFlix`}
+                                        text={`Check out ${title} on Ocinema`}
                                         url={window.location.href}
                                         className="flex-none flex items-center justify-center w-[60px] h-[60px] bg-white/10 hover:bg-white/20 text-white rounded-xl backdrop-blur-md border border-white/10 transition-all duration-300"
                                     >

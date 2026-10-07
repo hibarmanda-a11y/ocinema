@@ -14,7 +14,6 @@ export default defineConfig({
       srcDir: 'src',
       filename: 'sw.ts',
 
-      // ব্র্যান্ডিং আপডেট: SanuFlix → Ocinema
       manifest: {
         name: 'Ocinema',
         short_name: 'Ocinema',

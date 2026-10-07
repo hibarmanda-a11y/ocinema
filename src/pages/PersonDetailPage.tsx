@@ -89,7 +89,7 @@ const PersonDetailPage = () => {
     <div className="min-h-screen bg-gray-950 text-white pt-20 md:pt-24">
       <SEO
         title={person.name}
-        description={person.biography ? person.biography.slice(0, 155) + '...' : `View ${person.name}'s filmography and biography on SanuFlix`}
+        description={person.biography ? person.biography.slice(0, 155) + '...' : `View ${person.name}'s filmography and biography on Ocinema`}
         image={getImageUrl(person.profile_path, 'h632')}
         type="profile"
       />

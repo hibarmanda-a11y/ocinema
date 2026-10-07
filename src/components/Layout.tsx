@@ -4,7 +4,6 @@ import { FaSearch, FaTimes } from 'react-icons/fa'
 import { Navbar } from './Navbar'
 import { Footer } from './Footer'
 import { BackToTopButton } from './BackToTopButton'
-import InstallPWA from './InstallPWA'
 import { SettingsModal } from './SettingsModal'
 import { SearchSuggestions } from './SearchSuggestions'
 import { getHomeMode, setHomeMode, type HomeMode } from '../utils/homeMode'
@@ -170,7 +169,6 @@ export const Layout = ({ children }: LayoutProps) => {
         </main>
         {!['/downloader', '/reeailer'].includes(location.pathname) && <Footer />}
         <BackToTopButton />
-        <InstallPWA />
       </div>
 
       {/* Mobile Search Modal */}

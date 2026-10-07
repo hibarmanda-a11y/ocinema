@@ -9,7 +9,7 @@ interface SEOProps {
 }
 
 export const SEO = ({ title, description, image, type = 'website', url }: SEOProps) => {
-  const siteTitle = 'SanuFlix'
+  const siteTitle = 'Ocinema'
   const fullTitle = title ? `${title} | ${siteTitle}` : siteTitle
   const siteUrl = url || window.location.href
   const defaultImage = `${window.location.origin}/og-image.jpg` // fallback image

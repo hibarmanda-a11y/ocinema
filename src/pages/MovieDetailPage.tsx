@@ -130,7 +130,6 @@
 //       onTrailer={() => setShowTrailer(true)}
 //       inWatchlist={inWatchlist}
 //       onToggleWatchlist={() => movie && toggleWatchlist(movie, 'movie')}
-//       onDownload={() => window.open(`https://dl.vidsrc.vip/movie/${id}`, '_blank')}
 //       rating={rating}
 //     >
 //       {/* Overview Section */}
@@ -283,10 +282,8 @@
 // }
 
 // export default MovieDetailPage
-
-
 import { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { Link, useParams, useNavigate } from 'react-router-dom'
 import { DetailsLayout } from '../components/DetailsLayout'
 import { CastList } from '../components/CastList'
 import { Carousel } from '../components/Carousel'
@@ -307,13 +304,7 @@ import {
   fetchMovieContentRatings
 } from '../services/tmdb'
 import type { MovieDetails, Video, Credits, Movie, CollectionDetails, Keyword } from '../types/tmdb'
-import { FaImdb, FaPlay, FaDownload, FaCloudDownloadAlt } from 'react-icons/fa'
-
-interface DownloadOption {
-  quality: string
-  size: string
-  url: string
-}
+import { FaImdb, FaPlay } from 'react-icons/fa'
 
 const MovieDetailPage = () => {
   const { id } = useParams<{ id: string }>()
@@ -368,25 +359,21 @@ const MovieDetailPage = () => {
         setExternalIds(idsData)
         setKeywords(keywordsData)
 
-        // Director বের করুন
         const directorData = creditsData.crew.find(
           (person) => person.job === 'Director'
         )
         setDirector(directorData?.name || null)
 
-        // Find trailer
         const youtubeTrailer = videos.find(
           (v) => v.type === 'Trailer' && v.site === 'YouTube'
         )
         setTrailer(youtubeTrailer || videos[0] || null)
 
-        // Set Rating
         const usRating = ratingsData.results.find(r => r.iso_3166_1 === 'US')
         if (usRating && usRating.release_dates.length > 0) {
           setRating(usRating.release_dates[0].certification)
         }
 
-        // Fetch collection
         if (movieData.belongs_to_collection) {
           try {
             const collectionData = await fetchCollection(movieData.belongs_to_collection.id)
@@ -405,21 +392,12 @@ const MovieDetailPage = () => {
     loadMovieDetails()
   }, [id])
 
-  // Download options (multiple resolutions) — Video Player পেজে পাঠাবে
-  const downloadOptions: DownloadOption[] = [
-    { quality: '480p', size: '~400MB', url: `/movie/${id}/watch` },
-    { quality: '720p', size: '~900MB', url: `/movie/${id}/watch` },
-    { quality: '1080p', size: '~2GB', url: `/movie/${id}/watch` },
-    { quality: '4K', size: '~8GB', url: `/movie/${id}/watch` },
-  ]
-
   return (
     <>
-      {/* SEO Meta Tags */}
       {movie && (
         <SEO
           title={`${movie.title} (${new Date(movie.release_date).getFullYear()}) - Watch Online`}
-          description={movie.overview?.slice(0, 160) || `Watch ${movie.title} online in HD. Download in 480p, 720p, 1080p, 4K.`}
+          description={movie.overview?.slice(0, 160) || `Watch ${movie.title} online in HD.`}
           image={movie.backdrop_path ? `https://image.tmdb.org/t/p/w1280${movie.backdrop_path}` : undefined}
           type="website"
           url={`/movie/${id}`}
@@ -445,7 +423,6 @@ const MovieDetailPage = () => {
               <p className="text-gray-300 text-lg leading-relaxed">{movie?.overview}</p>
             </div>
 
-            {/* Director Info */}
             {director && (
               <div className="flex items-center gap-3">
                 <span className="text-gray-400 text-sm font-medium">Director:</span>
@@ -453,7 +430,6 @@ const MovieDetailPage = () => {
               </div>
             )}
 
-            {/* Keywords */}
             {keywords.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {keywords.map(keyword => (
@@ -465,7 +441,6 @@ const MovieDetailPage = () => {
             )}
           </div>
 
-          {/* Sidebar Info */}
           <div className="space-y-8">
             <div className="bg-white/5 rounded-2xl p-6 border border-white/10 space-y-6">
               <div>
@@ -489,7 +464,6 @@ const MovieDetailPage = () => {
                 </p>
               </div>
 
-              {/* IMDb Only */}
               {externalIds?.imdb_id && (
                 <div className="pt-4 border-t border-white/10">
                   <a
@@ -508,54 +482,25 @@ const MovieDetailPage = () => {
           </div>
         </section>
 
-        {/* Watch & Download CTA Section */}
+        {/* Watch Online CTA Section */}
         <section className="mt-12">
           <div className="bg-gradient-to-br from-red-950/40 via-black to-black rounded-2xl p-6 md:p-10 border border-red-900/40 shadow-2xl shadow-red-900/20">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-1 h-8 bg-gradient-to-b from-red-500 to-red-700 rounded-full" />
               <h2 className="text-2xl md:text-3xl font-bold text-white">
-                Watch & Download
+                Watch Online
               </h2>
             </div>
 
-            {/* Online Watch Button */}
-            <div className="mb-10">
-              <a
-                href={`/movie/${id}/watch`}
+            <div>
+              <Link
+                to={`/movie/${id}/watch`}
                 className="inline-flex items-center gap-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold px-8 py-4 rounded-xl transition-all shadow-lg shadow-red-600/40 hover:shadow-red-600/60 hover:-translate-y-0.5 text-lg"
               >
                 <FaPlay className="text-sm" />
                 Watch Online Free
-              </a>
+              </Link>
             </div>
-
-            {/* Download by Resolution */}
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <FaCloudDownloadAlt className="text-red-500 text-xl" />
-              Download Options
-            </h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {downloadOptions.map((res) => (
-                <a
-                  key={res.quality}
-                  href={res.url}
-                  className="group bg-black/40 hover:bg-red-600/90 border border-white/10 hover:border-red-500 rounded-xl p-5 text-center transition-all hover:-translate-y-1"
-                >
-                  <FaDownload className="text-red-500 group-hover:text-white text-2xl mx-auto mb-3 transition-colors" />
-                  <div className="text-xl font-bold text-white">{res.quality}</div>
-                  <div className="text-xs text-gray-400 group-hover:text-white/90 mt-1">
-                    {res.size}
-                  </div>
-                  <div className="text-xs text-red-400 group-hover:text-white mt-2 font-semibold uppercase tracking-wider">
-                    Download
-                  </div>
-                </a>
-              ))}
-            </div>
-
-            <p className="text-xs text-gray-500 mt-6 text-center">
-              Note: Download links are provided by third-party services. We do not host any files on our server.
-            </p>
           </div>
         </section>
 
@@ -581,14 +526,12 @@ const MovieDetailPage = () => {
           </section>
         )}
 
-        {/* Cast Section */}
         <section id="cast">
           {credits && credits.cast.length > 0 && (
             <CastList cast={credits.cast} showButton />
           )}
         </section>
 
-        {/* Media Section */}
         {images && (
           <MediaGallery
             posters={images.posters}
@@ -598,12 +541,10 @@ const MovieDetailPage = () => {
           />
         )}
 
-        {/* Collection Section */}
         {collection && collection.parts.length > 1 && (
           <CollectionSection collection={collection} />
         )}
 
-        {/* Production Companies */}
         {movie?.production_companies && movie.production_companies.length > 0 && (
           <section>
             <div className="flex items-center gap-3 mb-6">
@@ -618,14 +559,12 @@ const MovieDetailPage = () => {
           </section>
         )}
 
-        {/* Related Section */}
         <section id="related">
           {similarMovies.length > 0 && (
             <Carousel title="More Like This" items={similarMovies} mediaType="movie" />
           )}
         </section>
 
-        {/* Trailer Modal */}
         {trailer && (
           <Modal
             isOpen={showTrailer}

@@ -3,6 +3,7 @@ import { useEffect, lazy, Suspense } from 'react'
 import { Layout } from './components/Layout'
 import { LoadingSpinner } from './components/LoadingSpinner'
 import { DisclaimerDialog } from './components/DisclaimerDialog'
+import IntroScreen from './components/IntroScreen'
 
 // Lazy load all pages for better performance
 const HomePage = lazy(() => import('./pages/HomePage'))
@@ -50,6 +51,7 @@ function AppContent() {
   return (
     <>
       {seasonalEnabled }
+      <IntroScreen />
       <ScrollToTop />
       <DisclaimerDialog />
       <Layout>
@@ -91,4 +93,3 @@ function App() {
 }
 
 export default App
-

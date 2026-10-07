@@ -188,7 +188,7 @@ const DownloaderPage = () => {
     return (
         <div className="min-h-screen bg-[#050505] text-white selection:bg-primary/30 selection:text-white overflow-x-hidden">
             <SEO
-                title="Downloader - SanuFlix"
+                title="Downloader - Ocinema"
                 description="Premium download experience for movies and TV shows."
             />
 
@@ -201,7 +201,7 @@ const DownloaderPage = () => {
                     <div className="text-center space-y-2 z-20">
                         <h1 className="text-7xl md:text-9xl font-black tracking-tighter leading-[0.85] mix-blend-difference">
                             <div className="flex flex-col items-center">
-                                <SplitText text="SANUFLIX" className="text-white" />
+                                <SplitText text="OCINEMA" className="text-white" />
                                 <SplitText text="DOWNLOADER" className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-500 to-pink-500" />
                             </div>
                         </h1>

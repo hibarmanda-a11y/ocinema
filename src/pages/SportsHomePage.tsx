@@ -93,7 +93,7 @@ const SportsHomePage = () => {
   return (
     <div className="min-h-screen bg-bg-primary pb-20 md:pb-0">
       <SEO
-        title="Sports - SanuFlix"
+        title="Sports - Ocinema"
         description="Watch live sports matches, upcoming games, and follow your favorite teams. Live streaming for football, cricket, and more."
       />
 

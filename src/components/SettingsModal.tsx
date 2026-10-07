@@ -51,7 +51,7 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
                             </div>
                             <div>
                                 <h3 className="text-lg font-semibold text-white">Appearance</h3>
-                                <p className="text-sm text-gray-400">Customize how SanuFlix looks</p>
+                                <p className="text-sm text-gray-400">Customize how Ocinema looks</p>
                             </div>
                         </div>
 
@@ -164,7 +164,7 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
                 {/* Footer */}
                 <div className="p-6 border-t border-white/10 bg-white/5 text-center">
                     <p className="text-sm text-gray-500">
-                        SanuFlix v2.0.0 • Made with ❤️
+                        Ocinema v2.0.0 • Made with ❤️
                     </p>
                 </div>
             </div>

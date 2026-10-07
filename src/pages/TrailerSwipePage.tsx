@@ -512,7 +512,7 @@ const TrailerSwipePage = () => {
           <div className="h-1 w-full bg-gray-800 rounded-full overflow-hidden">
             <div className="h-full bg-primary transition-all duration-300 ease-out" style={{ width: `${loadingProgress}%` }} />
           </div>
-          <p className="text-center text-sm font-medium text-gray-400 animate-pulse">Optimising SanuFlix Reeailer feed...</p>
+          <p className="text-center text-sm font-medium text-gray-400 animate-pulse">Optimising Ocinema Reeailer feed...</p>
         </div>
       </div>
     )

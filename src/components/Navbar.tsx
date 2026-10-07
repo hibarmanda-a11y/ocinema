@@ -62,8 +62,6 @@ export const Navbar = ({
     { label: 'Indian', path: '/category/indian' },
     { label: 'Web-serie', path: '/category/web-series' },
     { label: 'MCU/Hollywood', path: '/category/mcu-hollywood' },
-    { label: 'Jonra', path: '/genres' },
-    { label: 'Category', path: '/category/all' },
   ]
 
   return (

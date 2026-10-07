@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sanuflix-v1';
+const CACHE_NAME = 'ocinema-v1';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

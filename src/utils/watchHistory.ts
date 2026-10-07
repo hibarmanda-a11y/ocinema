@@ -1,4 +1,10 @@
-const WATCH_HISTORY_KEY = 'sanuflix_watch_history'
+import {
+  getBrandStorageItem,
+  removeBrandStorageItem,
+  setBrandStorageItem,
+} from './brandStorage'
+
+const WATCH_HISTORY_KEY = 'watch_history'
 const MAX_HISTORY_ITEMS = 20
 
 export interface WatchHistoryItem {
@@ -16,7 +22,7 @@ export interface WatchHistoryItem {
 
 export const getWatchHistory = (): WatchHistoryItem[] => {
   try {
-    const stored = localStorage.getItem(WATCH_HISTORY_KEY)
+    const stored = getBrandStorageItem(WATCH_HISTORY_KEY)
     return stored ? JSON.parse(stored) : []
   } catch (error) {
     console.error('Failed to get watch history:', error)
@@ -49,7 +55,7 @@ export const addToWatchHistory = (item: Omit<WatchHistoryItem, 'lastWatchedAt'>)
       history = history.slice(0, MAX_HISTORY_ITEMS)
     }
 
-    localStorage.setItem(WATCH_HISTORY_KEY, JSON.stringify(history))
+    setBrandStorageItem(WATCH_HISTORY_KEY, JSON.stringify(history))
     
     // Dispatch custom event for UI updates
     window.dispatchEvent(new CustomEvent('watch-history-updated'))
@@ -73,7 +79,7 @@ export const removeFromWatchHistory = (id: number, mediaType: 'movie' | 'tv', se
       ))
     }
 
-    localStorage.setItem(WATCH_HISTORY_KEY, JSON.stringify(history))
+    setBrandStorageItem(WATCH_HISTORY_KEY, JSON.stringify(history))
     window.dispatchEvent(new CustomEvent('watch-history-updated'))
   } catch (error) {
     console.error('Failed to remove from watch history:', error)
@@ -82,7 +88,7 @@ export const removeFromWatchHistory = (id: number, mediaType: 'movie' | 'tv', se
 
 export const clearWatchHistory = (): void => {
   try {
-    localStorage.removeItem(WATCH_HISTORY_KEY)
+    removeBrandStorageItem(WATCH_HISTORY_KEY)
     window.dispatchEvent(new CustomEvent('watch-history-updated'))
   } catch (error) {
     console.error('Failed to clear watch history:', error)
@@ -93,4 +99,3 @@ export const getRecentWatchHistory = (limit: number = 10): WatchHistoryItem[] =>
   const history = getWatchHistory()
   return history.slice(0, limit)
 }
-

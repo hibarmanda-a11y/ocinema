@@ -52,10 +52,10 @@ export const DisclaimerDialog = () => {
                         {/* Content */}
                         <div className="p-6 md:p-8 space-y-4">
                             <p className="text-gray-300 text-center leading-relaxed">
-                                Please note that the movies, TV shows, and other content displayed on this website are <span className="text-white font-bold">not hosted by SanuFlix</span>.
+                                Please note that the movies, TV shows, and other content displayed on this website are <span className="text-white font-bold">not hosted by Ocinema</span>.
                             </p>
                             <p className="text-gray-400 text-sm text-center">
-                                All content is provided by non-affiliated third-party sources. SanuFlix does not accept responsibility for content hosted on third-party websites.
+                                All content is provided by non-affiliated third-party sources. Ocinema does not accept responsibility for content hosted on third-party websites.
                             </p>
 
                             <button

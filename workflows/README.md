@@ -2,7 +2,7 @@
 
 ## Zip Project Files
 
-This workflow automatically creates a zip archive of the SanuFlix project files.
+This workflow automatically creates a zip archive of the Ocinema project files.
 
 ### Triggers
 
@@ -13,7 +13,7 @@ This workflow automatically creates a zip archive of the SanuFlix project files.
 ### What it does
 
 1. Checks out the repository code
-2. Creates a timestamped zip file (e.g., `sanuflix-2025-10-24-123456.zip`)
+2. Creates a timestamped zip file (e.g., `ocinema-2025-10-24-123456.zip`)
 3. Excludes unnecessary files:
    - `.git` directory
    - `node_modules`

@@ -1,8 +1,8 @@
-# 🎬 SanuFlix - Open Source Streaming Platform
+# 🎬 Ocinema - Open Source Streaming Platform
 
 <div align="center">
 
-![SanuFlix Homepage](https://raw.githubusercontent.com/Sanuu7/SanuFlix-opensource/main/homepage.png)
+![Ocinema Homepage](https://raw.githubusercontent.com/Sanuu7/Ocinema-opensource/main/homepage.png)
 
 
 [![Deploy to Cloudflare Pages](https://img.shields.io/badge/Deploy-Cloudflare%20Pages-F38020?logo=cloudflare)](https://pages.cloudflare.com/)
@@ -22,8 +22,8 @@
 ### 1. Clone & Install
 
 ```bash
-git clone https://github.com/Sanuu7/SanuFlix-opensource
-cd sanuflix-opensource
+git clone https://github.com/Sanuu7/Ocinema-opensource
+cd ocinema-opensource
 npm install
 ```
 
@@ -41,7 +41,7 @@ VITE_TMDB_API_KEY=your_tmdb_api_key_here
 
 # Optional
 VITE_SPORTS_API_URL=
-VITE_APP_NAME=SanuFlix
+VITE_APP_NAME=Ocinema
 VITE_LOGO_URL=
 ```
 
@@ -99,7 +99,7 @@ wrangler login
 npm run build
 
 # Deploy
-wrangler pages deploy dist --project-name=sanuflix
+wrangler pages deploy dist --project-name=ocinema
 ```
 
 ---
@@ -142,20 +142,20 @@ npm run lint     # Lint code
 <summary>Click to view screenshots</summary>
 
 ### Watch Details Page
-![Watch Details Page](https://raw.githubusercontent.com/Sanuu7/SanuFlix-opensource/main/watchdetailspage.png)
+![Watch Details Page](https://raw.githubusercontent.com/Sanuu7/Ocinema-opensource/main/watchdetailspage.png)
 
 ### Watch Page
-![Watch Page](https://raw.githubusercontent.com/Sanuu7/SanuFlix-opensource/main/watchpage.png)
+![Watch Page](https://raw.githubusercontent.com/Sanuu7/Ocinema-opensource/main/watchpage.png)
 
 ### Genre Browser
-![Genre Browser](https://raw.githubusercontent.com/Sanuu7/SanuFlix-opensource/main/genre.png)
+![Genre Browser](https://raw.githubusercontent.com/Sanuu7/Ocinema-opensource/main/genre.png)
 
 ### Sports Section
-![Sports Section](https://raw.githubusercontent.com/Sanuu7/SanuFlix-opensource/main/sports.png)
+![Sports Section](https://raw.githubusercontent.com/Sanuu7/Ocinema-opensource/main/sports.png)
 
 </details>
 
-> 💡 **Check out the [Live Instance](https://sanuflix-web-v2.pages.dev/) for a better experience!**
+> 💡 **Check out the [Live Instance](https://ocinema-web-v2.pages.dev/) for a better experience!**
 
 ---
 
