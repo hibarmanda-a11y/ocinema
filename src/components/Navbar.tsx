@@ -1,10 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { FaSearch, FaBars, FaTimes, FaCog, FaVideo, FaChevronDown, FaCheck } from 'react-icons/fa'
-import { RandomButton } from './RandomButton'
-import { ManualInstallButton } from './ManualInstallButton'
-import { SearchSuggestions } from './SearchSuggestions' // Re-add this import
-import { getCurrentSeasonalTheme } from '../utils/seasonalThemes'
+import { FaSearch, FaBars, FaTimes, FaChevronDown, FaCheck } from 'react-icons/fa'
+import { SearchSuggestions } from './SearchSuggestions'
 import { type HomeMode } from '../utils/homeMode'
 
 interface NavbarProps {
@@ -33,7 +30,6 @@ export const Navbar = ({
   isMobileMenuOpen,
   setIsMobileMenuOpen,
   setIsMobileSearchOpen,
-  setIsSettingsOpen,
   searchQuery,
   setSearchQuery,
   showSuggestions,
@@ -51,7 +47,6 @@ export const Navbar = ({
   modeDropdownRef,
 }: NavbarProps) => {
   const [isScrolled, setIsScrolled] = useState(false)
-  const [isHalloween, setIsHalloween] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -62,74 +57,66 @@ export const Navbar = ({
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  useEffect(() => {
-    setIsHalloween(getCurrentSeasonalTheme() === 'halloween')
-  }, [])
+  const menuItems = [
+    { label: 'Home', path: '/' },
+    { label: 'Indian', path: '/category/indian' },
+    { label: 'Web-serie', path: '/category/web-series' },
+    { label: 'MCU/Hollywood', path: '/category/mcu-hollywood' },
+    { label: 'Jonra', path: '/genres' },
+    { label: 'Category', path: '/category/all' },
+  ]
 
   return (
-    <nav
-      className="fixed top-0 left-0 right-0 z-[999] !overflow-visible"
-    >
+    <nav className="fixed top-0 left-0 right-0 z-[999] !overflow-visible">
       {/* Background Layer */}
       <div
-        className={`absolute inset-0 transition-all duration-300 ${isScrolled
-          ? 'glass-effect shadow-lg'
-          : 'bg-black/70 md:bg-black/30 backdrop-blur-md'
-          }`}
+        className={`absolute inset-0 transition-all duration-300 ${
+          isScrolled
+            ? 'bg-black/95 backdrop-blur-md shadow-lg shadow-red-900/20'
+            : 'bg-gradient-to-b from-black/90 to-transparent'
+        }`}
       />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 md:h-20">
+      <div className="relative max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-14 sm:h-16 md:h-20">
           {/* Logo */}
           <Link
             to="/"
-            className={`text-2xl font-bold hover:scale-105 transition-transform relative ${isHalloween ? 'halloween-logo' : 'text-white md:text-gradient'
-              }`}
-            aria-label="SanuFlix Home"
+            className="flex items-center gap-2 hover:scale-105 transition-transform flex-shrink-0"
+            aria-label="Ocinema Home"
           >
-            <span className={isHalloween ? 'halloween-text' : ''}>
-              SanuFlix
-              {isHalloween && <span className="halloween-pumpkin">🎃</span>}
-            </span>
+            <img
+              src="/assets/ocinemalogo.png"
+              alt="Ocinema"
+              className="h-8 sm:h-10 md:h-12 w-auto object-contain"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none'
+                const parent = e.currentTarget.parentElement
+                if (parent && !parent.querySelector('.fallback-logo')) {
+                  const span = document.createElement('span')
+                  span.className = 'fallback-logo text-xl sm:text-2xl font-bold text-white'
+                  span.innerHTML = 'Oci<span class="text-red-600">nema</span>'
+                  parent.appendChild(span)
+                }
+              }}
+            />
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            <Link
-              to="/"
-              className="hover:text-primary transition-colors"
-              aria-label="Home"
-            >
-              <span>Home</span>
-            </Link>
+          <div className="hidden lg:flex items-center space-x-5 xl:space-x-7">
+            {menuItems.map((item) => (
+              <Link
+                key={item.label}
+                to={item.path}
+                className="text-sm font-medium text-gray-200 hover:text-red-500 transition-colors relative group whitespace-nowrap"
+                aria-label={item.label}
+              >
+                {item.label}
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-red-600 group-hover:w-full transition-all duration-300" />
+              </Link>
+            ))}
 
-            <Link
-              to="/my-list"
-              className="hover:text-primary transition-colors"
-              aria-label="My List"
-            >
-              <span>My List</span>
-            </Link>
-
-            <Link
-              to="/genres"
-              className="hover:text-primary transition-colors"
-              aria-label="Genres"
-            >
-              <span>Genres</span>
-            </Link>
-
-            <Link
-              to="/studios"
-              className="hover:text-primary transition-colors"
-              aria-label="Studios"
-            >
-              <span>Studios</span>
-            </Link>
-
-            <RandomButton variant="navbar" />
-
-            {/* Search Bar - Only show in Default Mode */}
+            {/* Search Bar */}
             {currentMode === 'default' && (
               <form onSubmit={handleSearch} className="relative">
                 <input
@@ -150,8 +137,9 @@ export const Navbar = ({
                   onBlur={handleInputBlur}
                   placeholder="Search..."
                   className="bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-2 pl-10
-                           focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
-                           transition-all w-48 focus:w-64"
+                           text-white placeholder-gray-400
+                           focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent
+                           transition-all w-44 xl:w-56 focus:w-56 xl:focus:w-72"
                   aria-label="Search movies and TV shows"
                 />
                 <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -165,86 +153,67 @@ export const Navbar = ({
               </form>
             )}
 
-            {/* Mode Dropdown - Desktop */}
+            {/* Mode Dropdown */}
             <div className="relative" ref={modeDropdownRef}>
               <button
                 onClick={() => setIsModeDropdownOpen(!isModeDropdownOpen)}
-                className="flex items-center space-x-2 px-3 py-2 glass-effect rounded-lg
+                className="flex items-center space-x-2 px-3 py-2 bg-white/10 border border-white/20 rounded-lg
                          hover:bg-white/20 transition-all duration-300
-                         focus:outline-none focus:ring-2 focus:ring-primary"
+                         focus:outline-none focus:ring-2 focus:ring-red-600"
                 aria-label="Select mode"
               >
-                <span className="text-sm font-medium">
-                  {currentMode === 'sports' ? 'Sports Mode' : 'Default Mode'}
+                <span className="text-xs xl:text-sm font-medium text-white whitespace-nowrap">
+                  {currentMode === 'sports' ? 'Sports' : 'Movies'}
                 </span>
-                <FaChevronDown className={`text-xs transition-transform duration-200 ${isModeDropdownOpen ? 'rotate-180' : ''}`} />
+                <FaChevronDown
+                  className={`text-xs text-white transition-transform duration-200 ${
+                    isModeDropdownOpen ? 'rotate-180' : ''
+                  }`}
+                />
               </button>
 
               {isModeDropdownOpen && (
-                <div className="absolute top-full right-0 mt-2 w-48 glass-effect rounded-lg shadow-2xl z-50 overflow-hidden animate-slide-up">
+                <div className="absolute top-full right-0 mt-2 w-44 bg-black/95 backdrop-blur-md border border-white/10 rounded-lg shadow-2xl z-50 overflow-hidden animate-slide-up">
                   <div className="p-2">
                     <button
                       onClick={() => handleModeChange('default')}
                       className={`w-full flex items-center justify-between p-3 rounded-lg transition-all duration-200
-                               hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-primary
-                               ${currentMode === 'default' ? 'bg-primary/20' : ''}`}
+                               hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-red-600
+                               ${currentMode === 'default' ? 'bg-red-600/20' : ''}`}
                     >
-                      <span className="font-medium text-sm">Default Mode</span>
-                      {currentMode === 'default' && <FaCheck className="text-primary text-sm" />}
+                      <span className="font-medium text-sm text-white">Movies</span>
+                      {currentMode === 'default' && <FaCheck className="text-red-500 text-sm" />}
                     </button>
                     <button
                       onClick={() => handleModeChange('sports')}
                       className={`w-full flex items-center justify-between p-3 rounded-lg transition-all duration-200
-                               hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-primary
-                               ${currentMode === 'sports' ? 'bg-primary/20' : ''}`}
+                               hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-red-600
+                               ${currentMode === 'sports' ? 'bg-red-600/20' : ''}`}
                     >
-                      <span className="font-medium text-sm">Sports Mode</span>
-                      {currentMode === 'sports' && <FaCheck className="text-primary text-sm" />}
+                      <span className="font-medium text-sm text-white">Sports</span>
+                      {currentMode === 'sports' && <FaCheck className="text-red-500 text-sm" />}
                     </button>
                   </div>
                 </div>
               )}
             </div>
-
-            {/* Reeailer Button - Desktop */}
-            <Link
-              to="/reeailer"
-              className="p-2 hover:text-primary transition-colors rounded-full hover:bg-white/10"
-              aria-label="Reeailer"
-            >
-              <FaVideo className="text-xl" />
-            </Link>
-
-            {/* Manual Install Button - Desktop */}
-            <ManualInstallButton />
-
-            {/* Settings Button - Desktop */}
-            <button
-              onClick={() => setIsSettingsOpen(true)}
-              className="p-2 hover:text-primary transition-colors rounded-full hover:bg-white/10"
-              aria-label="Settings"
-            >
-              <FaCog className="text-xl" />
-            </button>
           </div>
 
-          {/* Mobile Buttons */}
-          <div className="md:hidden flex items-center space-x-3">
-            {/* Mobile Search Button - Only show in Default Mode */}
+          {/* Mobile/Tablet Buttons */}
+          <div className="lg:hidden flex items-center space-x-2">
             {currentMode === 'default' && (
               <button
                 onClick={() => setIsMobileSearchOpen(true)}
-                className="text-xl hover:text-primary transition-colors p-2 rounded-full hover:bg-white/10"
+                className="text-lg sm:text-xl text-white hover:text-red-500 transition-colors p-2 rounded-full hover:bg-white/10"
                 aria-label="Search"
               >
                 <FaSearch />
               </button>
             )}
 
-            {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-2xl hover:text-primary transition-colors p-2 rounded-full hover:bg-white/10"
+              className="text-xl sm:text-2xl text-white hover:text-red-500 transition-colors p-2 rounded-full hover:bg-white/10"
               aria-label="Toggle mobile menu"
             >
               {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
@@ -252,89 +221,45 @@ export const Navbar = ({
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile/Tablet Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden pb-6 animate-slide-up border-t border-white/10 bg-black/80 backdrop-blur-sm">
-            <div className="flex flex-col space-y-5 pt-4">
-              <Link
-                to="/"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-white hover:text-primary transition-colors px-2 py-1 rounded-lg hover:bg-white/10"
-              >
-                <span className="text-lg">Home</span>
-              </Link>
-
-              <Link
-                to="/my-list"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-white hover:text-primary transition-colors px-2 py-1 rounded-lg hover:bg-white/10"
-              >
-                <span className="text-lg">My List</span>
-              </Link>
-
-              <Link
-                to="/genres"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-white hover:text-primary transition-colors px-2 py-1 rounded-lg hover:bg-white/10"
-              >
-                <span className="text-lg">Genres</span>
-              </Link>
-
-              <Link
-                to="/studios"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-white hover:text-primary transition-colors px-2 py-1 rounded-lg hover:bg-white/10"
-              >
-                <span className="text-lg">Studios</span>
-              </Link>
-
-              <Link
-                to="/reeailer"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-white hover:text-primary transition-colors px-2 py-1 rounded-lg hover:bg-white/10"
-              >
-                <span className="text-lg flex items-center gap-2">
-                  <FaVideo className="text-base" />
-                  Reeailer
-                </span>
-              </Link>
+          <div className="lg:hidden pb-6 animate-slide-up border-t border-white/10 bg-black/95 backdrop-blur-sm">
+            <div className="flex flex-col space-y-4 pt-4">
+              {menuItems.map((item) => (
+                <Link
+                  key={item.label}
+                  to={item.path}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-white hover:text-red-500 transition-colors px-2 py-2 rounded-lg hover:bg-white/10 text-base sm:text-lg"
+                >
+                  {item.label}
+                </Link>
+              ))}
 
               {/* Mode Selector for Mobile */}
-              <div className="border-t border-white/10 pt-4">
-                <div className="text-xs text-gray-400 mb-2 px-2">Home Mode</div>
+              <div className="border-t border-white/10 pt-4 mt-2">
+                <div className="text-xs text-gray-400 mb-2 px-2 uppercase tracking-wider">
+                  Mode
+                </div>
                 <button
                   onClick={() => handleModeChange('default')}
                   className={`w-full flex items-center justify-between px-2 py-3 rounded-lg transition-all duration-200
                                hover:bg-white/10 text-left
-                               ${currentMode === 'default' ? 'bg-primary/20' : ''}`}
+                               ${currentMode === 'default' ? 'bg-red-600/20' : ''}`}
                 >
-                  <span className="text-lg">Default Mode</span>
-                  {currentMode === 'default' && <FaCheck className="text-primary" />}
+                  <span className="text-base sm:text-lg text-white">Movies</span>
+                  {currentMode === 'default' && <FaCheck className="text-red-500" />}
                 </button>
                 <button
                   onClick={() => handleModeChange('sports')}
                   className={`w-full flex items-center justify-between px-2 py-3 rounded-lg transition-all duration-200
                                hover:bg-white/10 text-left
-                               ${currentMode === 'sports' ? 'bg-primary/20' : ''}`}
+                               ${currentMode === 'sports' ? 'bg-red-600/20' : ''}`}
                 >
-                  <span className="text-lg">Sports Mode</span>
-                  {currentMode === 'sports' && <FaCheck className="text-primary" />}
+                  <span className="text-base sm:text-lg text-white">Sports</span>
+                  {currentMode === 'sports' && <FaCheck className="text-red-500" />}
                 </button>
               </div>
-
-              {/* Settings for Mobile */}
-              <button
-                onClick={() => {
-                  setIsMobileMenuOpen(false)
-                  setIsSettingsOpen(true)
-                }}
-                className="text-white hover:text-primary transition-colors px-2 py-1 rounded-lg hover:bg-white/10 text-left w-full"
-              >
-                <span className="text-lg flex items-center gap-2">
-                  <FaCog className="text-base" />
-                  Settings
-                </span>
-              </button>
             </div>
           </div>
         )}

@@ -9,40 +9,30 @@
 }
 
 :root {
-  /* Premium Dark Theme Variables */
-  --color-primary: #F472B6;
-  /* Pink-400 */
-  --color-primary-dark: #DB2777;
-  /* Pink-600 */
-  --color-secondary: #8B5CF6;
-  /* Violet-500 */
-  --color-accent: #06B6D4;
-  /* Cyan-500 */
+  /* Commercial Black-Red-White Theme */
+  --color-primary: #E50914;        /* Netflix Red */
+  --color-primary-dark: #B20710;   /* Darker Red */
+  --color-secondary: #FFFFFF;      /* White */
+  --color-accent: #FF6B6B;         /* Light Red */
 
-  --color-gradient-start: #F472B6;
-  --color-gradient-end: #8B5CF6;
+  --color-gradient-start: #E50914;
+  --color-gradient-end: #B20710;
 
-  /* Deep Space Backgrounds */
-  --bg-primary: #0f172a;
-  /* Slate-900 */
-  --bg-secondary: #1e293b;
-  /* Slate-800 */
-  --bg-tertiary: #334155;
-  /* Slate-700 */
+  /* Deep Black Backgrounds */
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #141414;
+  --bg-tertiary: #1f1f1f;
 
-  --text-primary: #f8fafc;
-  /* Slate-50 */
-  --text-secondary: #94a3b8;
-  /* Slate-400 */
-  --text-muted: #64748b;
-  /* Slate-500 */
+  --text-primary: #ffffff;
+  --text-secondary: #b3b3b3;
+  --text-muted: #808080;
 
-  /* Glassmorphism */
-  --glass-bg: rgba(15, 23, 42, 0.6);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-highlight: rgba(255, 255, 255, 0.05);
+  /* Glassmorphism - Red Tint */
+  --glass-bg: rgba(20, 20, 20, 0.8);
+  --glass-border: rgba(229, 9, 20, 0.2);
+  --glass-highlight: rgba(229, 9, 20, 0.05);
 
-  --shadow-color: rgba(0, 0, 0, 0.5);
+  --shadow-color: rgba(0, 0, 0, 0.8);
 }
 
 @layer base {

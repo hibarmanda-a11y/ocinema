@@ -23,7 +23,7 @@ const TABS = [
     { id: 'overview', label: 'Overview' },
     { id: 'cast', label: 'Cast & Crew' },
     { id: 'media', label: 'Media' },
-    { id: 'reviews', label: 'Reviews' },
+   
     { id: 'related', label: 'More Like This' }
 ]
 

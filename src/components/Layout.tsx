@@ -4,14 +4,9 @@ import { FaSearch, FaTimes } from 'react-icons/fa'
 import { Navbar } from './Navbar'
 import { Footer } from './Footer'
 import { BackToTopButton } from './BackToTopButton'
-import { AnimatedBackground } from './AnimatedBackground'
-import { HalloweenTheme } from './HalloweenTheme'
-import { EffectsToggle } from './EffectsToggle'
 import InstallPWA from './InstallPWA'
 import { SettingsModal } from './SettingsModal'
-
-import { CustomCursor } from './CustomCursor'
-import { SearchSuggestions } from './SearchSuggestions' // Keep this for Mobile Search Modal
+import { SearchSuggestions } from './SearchSuggestions'
 import { getHomeMode, setHomeMode, type HomeMode } from '../utils/homeMode'
 
 interface LayoutProps {
@@ -77,7 +72,6 @@ export const Layout = ({ children }: LayoutProps) => {
       if (searchInputRef.current) {
         searchInputRef.current.focus()
       }
-      // Add escape key listener for mobile search
       const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === 'Escape') {
           setIsMobileSearchOpen(false)
@@ -118,7 +112,6 @@ export const Layout = ({ children }: LayoutProps) => {
   }
 
   const handleInputBlur = () => {
-    // Delay hiding suggestions to allow clicking on them
     setTimeout(() => setShowSuggestions(false), 200)
   }
 
@@ -138,7 +131,6 @@ export const Layout = ({ children }: LayoutProps) => {
     setCurrentMode(mode)
     setIsModeDropdownOpen(false)
     setIsMobileMenuOpen(false)
-    // Navigate to appropriate homepage
     if (mode === 'sports') {
       navigate('/sports')
     } else {
@@ -148,12 +140,6 @@ export const Layout = ({ children }: LayoutProps) => {
 
   return (
     <div className="min-h-screen flex flex-col relative">
-      {/* Animated Background */}
-      <AnimatedBackground />
-
-      {/* Seasonal Theme Overlay */}
-      <HalloweenTheme />
-
       {/* Main Content */}
       <div className="relative z-10">
         {!['/downloader', '/reeailer'].includes(location.pathname) && (
@@ -184,18 +170,13 @@ export const Layout = ({ children }: LayoutProps) => {
         </main>
         {!['/downloader', '/reeailer'].includes(location.pathname) && <Footer />}
         <BackToTopButton />
-        {!['/downloader', '/reeailer'].includes(location.pathname) && <EffectsToggle />}
         <InstallPWA />
-
-        <CustomCursor />
       </div>
 
-
-      {/* Mobile Search Modal (outside Navbar stacking context) */}
+      {/* Mobile Search Modal */}
       {isMobileSearchOpen && (
         <div className="md:hidden fixed inset-0 bg-black/98 backdrop-blur-md z-[9999] animate-fade-in">
           <div className="flex flex-col h-full bg-black/95">
-            {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-white/20 bg-black/80">
               <h2 className="text-xl font-bold text-gradient">Search</h2>
               <button
@@ -211,7 +192,6 @@ export const Layout = ({ children }: LayoutProps) => {
               </button>
             </div>
 
-            {/* Search Form */}
             <div className="p-6 relative bg-black/80">
               <form onSubmit={handleSearch} className="relative">
                 <input
@@ -240,7 +220,6 @@ export const Layout = ({ children }: LayoutProps) => {
                 </button>
               </form>
 
-              {/* Search Suggestions for Mobile */}
               <div className="mt-4">
                 <SearchSuggestions
                   query={searchQuery}
@@ -251,7 +230,6 @@ export const Layout = ({ children }: LayoutProps) => {
               </div>
             </div>
 
-            {/* Empty space area with solid background */}
             <div className="flex-1 bg-black/95"></div>
           </div>
         </div>
@@ -262,8 +240,6 @@ export const Layout = ({ children }: LayoutProps) => {
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
       />
-
-      <CustomCursor />
     </div>
   )
 }

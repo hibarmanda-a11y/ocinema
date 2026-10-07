@@ -26,7 +26,6 @@ const logoParam = LOGO_URL ? `&logo=${encodeURIComponent(LOGO_URL)}` : ''
 /**
  * Default streaming servers configuration
  * 
- * IMPORTANT: Replace these placeholder URLs with your actual embed server URLs.
  * The placeholders will be replaced at runtime:
  * - {tmdbId} - The TMDB movie/show ID
  * - {season} - Season number (TV shows only)
@@ -36,29 +35,29 @@ const logoParam = LOGO_URL ? `&logo=${encodeURIComponent(LOGO_URL)}` : ''
 export const STREAMING_SERVERS: StreamingServer[] = [
     {
         id: 'server1',
-        name: 'Server 1 (Primary)',
-        description: 'Primary streaming server with auto-play',
+        name: 'Server 1 (VidFast)',
+        description: 'Fast streaming server',
         isActive: true,
-        movieUrlTemplate: 'https://your-embed-server.example/movie/{tmdbId}?autoPlay=true',
-        tvUrlTemplate: 'https://your-embed-server.example/tv/{tmdbId}/{season}/{episode}?autoPlay=true',
+        movieUrlTemplate: 'https://vidfast.pro/movie/{tmdbId}',
+        tvUrlTemplate: 'https://vidfast.pro/tv/{tmdbId}/{season}/{episode}',
         supportsThemeColor: false,
     },
     {
         id: 'server2',
-        name: 'Server 2 (Theme Support)',
-        description: 'Streaming with theme color support',
+        name: 'Server 2 (VidLink)',
+        description: 'Alternative streaming server',
         isActive: true,
-        movieUrlTemplate: 'https://your-embed-server2.example/movie/{tmdbId}?color={themeColor}',
-        tvUrlTemplate: 'https://your-embed-server2.example/tv/{tmdbId}/{season}/{episode}?color={themeColor}',
-        supportsThemeColor: true,
+        movieUrlTemplate: 'https://vidlink.pro/movie/{tmdbId}',
+        tvUrlTemplate: 'https://vidlink.pro/tv/{tmdbId}/{season}/{episode}',
+        supportsThemeColor: false,
     },
     {
         id: 'server3',
-        name: 'Server 3 (Backup)',
+        name: 'Server 3 (VidSrc.to)',
         description: 'Backup streaming server',
         isActive: true,
-        movieUrlTemplate: 'https://your-backup-server.example/embed/movie/{tmdbId}',
-        tvUrlTemplate: 'https://your-backup-server.example/embed/tv/{tmdbId}/{season}/{episode}',
+        movieUrlTemplate: 'https://vidsrc.to/embed/movie/{tmdbId}',
+        tvUrlTemplate: 'https://vidsrc.to/embed/tv/{tmdbId}/{season}/{episode}',
         supportsThemeColor: false,
     },
 ]

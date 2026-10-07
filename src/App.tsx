@@ -42,14 +42,14 @@ function ScrollToTop() {
 }
 
 import { useTheme } from './contexts/ThemeContext'
-import { ChristmasSnow } from './components/ChristmasSnow'
+// import { ChristmasSnow } from './components/ChristmasSnow'
 
 function AppContent() {
   const { seasonalEnabled } = useTheme()
 
   return (
     <>
-      {seasonalEnabled && <ChristmasSnow />}
+      {seasonalEnabled }
       <ScrollToTop />
       <DisclaimerDialog />
       <Layout>

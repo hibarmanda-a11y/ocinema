@@ -394,3 +394,33 @@ export const fetchKeywords = async (id: number, type: 'movie' | 'tv'): Promise<K
   const response = await tmdbApi.get(`${type}/${id}/keywords`)
   return response.data.keywords || response.data.results || []
 }
+
+
+
+//  For hindhi and all latest movies
+
+// হিন্দি ভাষার নতুন মুভি (Latest Hindi Movies)
+export const fetchLatestHindiMovies = async (page: number = 1): Promise<Movie[]> => {
+  const response = await tmdbApi.get<TMDBResponse<Movie>>('/discover/movie', {
+    params: {
+      with_original_language: 'hi',
+      sort_by: 'release_date.desc',
+      'vote_count.gte': 10,
+      page,
+    },
+  })
+  return response.data.results
+}
+
+// অন্যান্য ভাষার নতুন মুভি (Latest Non-Hindi Movies)
+export const fetchLatestOtherMovies = async (page: number = 1): Promise<Movie[]> => {
+  const response = await tmdbApi.get<TMDBResponse<Movie>>('/discover/movie', {
+    params: {
+      without_original_language: 'hi',
+      sort_by: 'release_date.desc',
+      'vote_count.gte': 10,
+      page,
+    },
+  })
+  return response.data.results
+}
