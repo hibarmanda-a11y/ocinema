@@ -7,7 +7,7 @@ import { BackToTopButton } from './BackToTopButton'
 import { SettingsModal } from './SettingsModal'
 import { SearchSuggestions } from './SearchSuggestions'
 import { getHomeMode, setHomeMode, type HomeMode } from '../utils/homeMode'
-
+import { HilltopAd } from './HilltopAd';
 interface LayoutProps {
   children: ReactNode
 }
@@ -139,6 +139,7 @@ export const Layout = ({ children }: LayoutProps) => {
 
   return (
     <div className="min-h-screen flex flex-col relative">
+      <HilltopAd />
       {/* Main Content */}
       <div className="relative z-10">
         {!['/downloader', '/reeailer'].includes(location.pathname) && (
