@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { FaStar, FaChevronLeft, FaChevronRight, FaFire } from 'react-icons/fa'
-import { getImageUrl } from '../services/tmdb'
-import { fetchNowPlayingMoviesPaginated } from '../services/tmdbPaginated'
+import {
+  fetchLatestHindiMovies,
+  fetchLatestEnglishMovies,
+  getImageUrl,
+} from '../services/tmdb'
 import { formatDistanceToNow } from '../utils/formatters'
 import type { Movie } from '../types/tmdb'
 
@@ -10,33 +13,94 @@ interface LatestReleasesGridProps {
   title?: string
 }
 
+const MAX_PAGES = 20
+const MOVIES_PER_ROW = 6
+
 export const LatestReleasesGrid = ({
   title = 'Latest Releases',
 }: LatestReleasesGridProps) => {
   const [movies, setMovies] = useState<Movie[]>([])
   const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
   const [loading, setLoading] = useState(true)
+  const [failedPosterIds, setFailedPosterIds] = useState<Set<number>>(
+    () => new Set(),
+  )
 
   useEffect(() => {
+    let isCurrentRequest = true
+
     const load = async () => {
       setLoading(true)
       try {
-        const data = await fetchNowPlayingMoviesPaginated(page)
-        // প্রতি পেজে সবসময় ২০টি মুভি (৫ কলাম × ৪ সারি)
-        setMovies(data.results.slice(0, 20))
-        setTotalPages(Math.min(data.total_pages || 1, 20))
+        const [hindiMovies, englishMovies] = await Promise.all([
+          fetchLatestHindiMovies(page),
+          fetchLatestEnglishMovies(page),
+        ])
+        if (!isCurrentRequest) return
+
+        const sortByReleaseDate = (first: Movie, second: Movie) => {
+          if (!first.release_date) return second.release_date ? 1 : 0
+          if (!second.release_date) return -1
+          return second.release_date.localeCompare(first.release_date)
+        }
+        const prepareMovies = (source: Movie[]) =>
+          source
+            .filter((movie) => movie.poster_path)
+            .sort(sortByReleaseDate)
+
+        const sources = [
+          prepareMovies(hindiMovies),
+          prepareMovies(englishMovies),
+        ]
+        const sourceIndexes = [0, 0]
+        const seenMovieIds = new Set<number>()
+        const pageMovies: Movie[] = []
+        let nextSource = 0
+
+        while (pageMovies.length < 20 && sources.some(
+          (source, index) => sourceIndexes[index] < source.length,
+        )) {
+          let sourceIndex = nextSource
+          if (sourceIndexes[sourceIndex] >= sources[sourceIndex].length) {
+            sourceIndex = 1 - sourceIndex
+          }
+
+          let rowCount = 0
+          while (
+            rowCount < MOVIES_PER_ROW &&
+            pageMovies.length < 20 &&
+            sourceIndexes[sourceIndex] < sources[sourceIndex].length
+          ) {
+            const movie = sources[sourceIndex][sourceIndexes[sourceIndex]++]
+            if (seenMovieIds.has(movie.id)) continue
+            seenMovieIds.add(movie.id)
+            pageMovies.push(movie)
+            rowCount++
+          }
+
+          nextSource = 1 - sourceIndex
+        }
+
+        setMovies(pageMovies)
+        setFailedPosterIds(new Set())
       } catch (error) {
+        if (!isCurrentRequest) return
         console.error('Failed to load latest releases:', error)
+        setMovies([])
       } finally {
-        setLoading(false)
+        if (isCurrentRequest) setLoading(false)
       }
     }
+
     load()
+
+    return () => {
+      isCurrentRequest = false
+    }
   }, [page])
 
   const handlePageChange = (newPage: number) => {
-    if (newPage < 1 || newPage > totalPages) return
+    if (newPage < 1 || newPage > MAX_PAGES) return
     setPage(newPage)
     document.getElementById('latest-releases')?.scrollIntoView({
       behavior: 'smooth',
@@ -48,6 +112,26 @@ export const LatestReleasesGrid = ({
     if (!dateString) return new Date()
     return new Date(dateString)
   }
+
+  const getLanguageBadge = (language: string) => {
+    if (language === 'hi') {
+      return { label: 'HI', className: 'bg-red-600 text-white' }
+    }
+    if (language === 'en') {
+      return { label: 'EN', className: 'bg-blue-600 text-white' }
+    }
+    return {
+      label: language.toUpperCase(),
+      className: 'bg-gray-700 text-gray-100',
+    }
+  }
+  const movieRows = Array.from(
+    { length: Math.ceil(movies.length / MOVIES_PER_ROW) },
+    (_, index) => movies.slice(
+      index * MOVIES_PER_ROW,
+      (index + 1) * MOVIES_PER_ROW,
+    ),
+  )
 
   return (
     <section id="latest-releases" className="w-full px-4 sm:px-6 lg:px-8 py-8">
@@ -61,7 +145,6 @@ export const LatestReleasesGrid = ({
           </h2>
         </div>
 
-        {/* Grid — বড় ডিভাইসে ৫ কলাম */}
         {loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-5 lg:gap-6">
             {[...Array(20)].map((_, i) => (
@@ -73,26 +156,60 @@ export const LatestReleasesGrid = ({
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-5 lg:gap-6">
-            {movies.map((movie) => (
-              <Link
-                key={movie.id}
-                to={`/movie/${movie.id}`}
-                className="group block"
+          <div className="space-y-4 md:space-y-5 lg:space-y-6">
+            {movieRows.map((row, rowIndex) => (
+              <div
+                key={`movie-row-${rowIndex}`}
+                className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-5 lg:gap-6"
               >
+                {row.map((movie) => {
+              const languageBadge = getLanguageBadge(movie.original_language)
+
+              return (
+                <Link
+                  key={movie.id}
+                  to={`/movie/${movie.id}`}
+                  className="group block"
+                >
                 {/* Poster — বড় ডিভাইসে বড় সাইজ */}
                 <div className="relative aspect-[2/3] rounded-lg lg:rounded-xl overflow-hidden bg-white/5 border border-white/10 group-hover:border-red-600/60 transition-all duration-300">
-                  <img
-                    src={getImageUrl(movie.poster_path, 'w500')}
-                    alt={movie.title}
-                    loading="lazy"
-                    className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
-                  />
+                  {failedPosterIds.has(movie.id) ? (
+                    <div
+                      className="flex h-full w-full items-center justify-center bg-gray-800 px-4 text-center"
+                      role="img"
+                      aria-label={`${movie.title} poster unavailable`}
+                    >
+                      <span className="text-sm font-semibold text-gray-300 line-clamp-3">
+                        {movie.title}
+                      </span>
+                    </div>
+                  ) : (
+                    <img
+                      src={getImageUrl(movie.poster_path, 'w500')}
+                      alt={movie.title}
+                      loading="lazy"
+                      onError={() =>
+                        setFailedPosterIds((failedIds) => {
+                          const updatedIds = new Set(failedIds)
+                          updatedIds.add(movie.id)
+                          return updatedIds
+                        })
+                      }
+                      className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
+                    />
+                  )}
 
                   {/* Top Left Trending Tag */}
                   <div className="absolute top-2 left-2">
                     <span className="px-2 py-0.5 bg-red-600 text-white text-[9px] sm:text-[10px] font-bold uppercase tracking-wider rounded">
                       Trending
+                    </span>
+                  </div>
+
+                  {/* Original language */}
+                  <div className="absolute top-10 left-2">
+                    <span className={`px-2 py-0.5 text-[9px] sm:text-[10px] font-bold rounded ${languageBadge.className}`}>
+                      {languageBadge.label}
                     </span>
                   </div>
 
@@ -124,13 +241,16 @@ export const LatestReleasesGrid = ({
                     {formatDistanceToNow(getReleaseDate(movie.release_date))}
                   </p>
                 </div>
-              </Link>
+                </Link>
+              )
+                })}
+              </div>
             ))}
           </div>
         )}
 
         {/* Pagination */}
-        {!loading && totalPages > 1 && (
+        {!loading && MAX_PAGES > 1 && (
           <div className="flex items-center justify-center gap-2 mt-10">
             <button
               onClick={() => handlePageChange(page - 1)}
@@ -143,14 +263,14 @@ export const LatestReleasesGrid = ({
             </button>
 
             <div className="flex items-center gap-1 mx-2">
-              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+              {Array.from({ length: Math.min(5, MAX_PAGES) }, (_, i) => {
                 let pageNum
-                if (totalPages <= 5) {
+                if (MAX_PAGES <= 5) {
                   pageNum = i + 1
                 } else if (page <= 3) {
                   pageNum = i + 1
-                } else if (page >= totalPages - 2) {
-                  pageNum = totalPages - 4 + i
+                } else if (page >= MAX_PAGES - 2) {
+                  pageNum = MAX_PAGES - 4 + i
                 } else {
                   pageNum = page - 2 + i
                 }
@@ -173,7 +293,7 @@ export const LatestReleasesGrid = ({
 
             <button
               onClick={() => handlePageChange(page + 1)}
-              disabled={page === totalPages}
+              disabled={page === MAX_PAGES}
               className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-red-600 border border-white/10 rounded-lg text-white text-sm font-medium transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white/5"
               aria-label="Next page"
             >

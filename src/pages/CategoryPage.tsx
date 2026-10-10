@@ -115,6 +115,41 @@ const sortOptions = [
   { value: 'title.desc', label: 'Z-A' },
 ]
 
+const IndianMovieCard = ({ movie }: { movie: Movie }) => {
+  const [imageFailed, setImageFailed] = useState(false)
+
+  return (
+    <Link
+      to={`/movie/${movie.id}`}
+      className="group block relative aspect-[2/3] overflow-hidden rounded-xl bg-[#111] shadow-lg"
+    >
+      {imageFailed ? (
+        <div
+          className="flex h-full w-full items-center justify-center bg-gray-800 px-4 text-center"
+          role="img"
+          aria-label={`${movie.title} poster unavailable`}
+        >
+          <span className="text-sm font-semibold text-gray-300 line-clamp-3">
+            {movie.title}
+          </span>
+        </div>
+      ) : (
+        <img
+          src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+          alt={movie.title}
+          loading="lazy"
+          onError={() => setImageFailed(true)}
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+      )}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent" />
+      <h2 className="absolute bottom-3 left-3 right-3 text-sm font-semibold text-white line-clamp-2">
+        {movie.title}
+      </h2>
+    </Link>
+  )
+}
+
 const PagedCategoryPage = ({ category }: { category: string }) => {
   const config = pagedCategoryConfig[category]
   const [items, setItems] = useState<CategoryMedia[]>([])
@@ -134,7 +169,11 @@ const PagedCategoryPage = ({ category }: { category: string }) => {
       try {
         const response = await config.fetchFn(page)
         if (!isCurrentRequest) return
-        setItems(response.results)
+        setItems(
+          category === 'indian'
+            ? response.results.filter(item => item.poster_path !== null)
+            : response.results
+        )
         setTotalPages(response.total_pages)
       } catch (loadError) {
         if (!isCurrentRequest) return
@@ -187,11 +226,15 @@ const PagedCategoryPage = ({ category }: { category: string }) => {
               [...Array(15)].map((_, index) => <SkeletonCard key={index} />)
             ) : items.length > 0 ? (
               items.map(item => (
-                <MediaCard
-                  key={item.id}
-                  item={item}
-                  mediaType={config.mediaType}
-                />
+                category === 'indian' && 'title' in item ? (
+                  <IndianMovieCard key={item.id} movie={item} />
+                ) : (
+                  <MediaCard
+                    key={item.id}
+                    item={item}
+                    mediaType={config.mediaType}
+                  />
+                )
               ))
             ) : (
               <p className="col-span-full py-12 text-center text-gray-400">
@@ -283,7 +326,10 @@ const LegacyCategoryPage = ({ category }: { category: string | undefined }) => {
         page + 1,
         config.supportsSorting ? sortBy : undefined
       )
-      setItems(previousItems => [...previousItems, ...response.results])
+      const newItems = category === 'indian'
+        ? response.results.filter(item => item.poster_path !== null)
+        : response.results
+      setItems(previousItems => [...previousItems, ...newItems])
       setPage(currentPage => currentPage + 1)
       setHasMore(response.page < response.total_pages)
     } catch (loadError) {

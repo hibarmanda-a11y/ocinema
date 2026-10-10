@@ -72,6 +72,27 @@ export const fetchMovieDetails = async (movieId: number): Promise<MovieDetails> 
   return response.data
 }
 
+export const getAudioLanguages = (movie: MovieDetails): string[] => {
+  const langs = movie.spoken_languages?.map(language => language.iso_639_1) || []
+  const hasHindi = langs.includes('hi')
+  const hasEnglish = langs.includes('en')
+  const result: string[] = []
+
+  if (hasHindi) result.push('Hindi')
+  if (hasEnglish) result.push('English')
+  if (langs.includes('ta')) result.push('Tamil')
+  if (langs.includes('te')) result.push('Telugu')
+  if (langs.includes('ko')) result.push('Korean')
+  if (langs.includes('ja')) result.push('Japanese')
+
+  return result
+}
+
+export const isDualAudio = (movie: MovieDetails): boolean => {
+  const langs = getAudioLanguages(movie)
+  return langs.length >= 2
+}
+
 export const fetchMovieVideos = async (movieId: number): Promise<Video[]> => {
   const response = await tmdbApi.get<{ results: Video[] }>(`/movie/${movieId}/videos`)
   return response.data.results
@@ -397,28 +418,45 @@ export const fetchKeywords = async (id: number, type: 'movie' | 'tv'): Promise<K
 
 
 
-//  For hindhi and all latest movies
-
-// হিন্দি ভাষার নতুন মুভি (Latest Hindi Movies)
+// Latest Hindi Movies
 export const fetchLatestHindiMovies = async (page: number = 1): Promise<Movie[]> => {
+  const today = new Date().toISOString().split('T')[0]
   const response = await tmdbApi.get<TMDBResponse<Movie>>('/discover/movie', {
     params: {
       with_original_language: 'hi',
-      sort_by: 'release_date.desc',
-      'vote_count.gte': 10,
+      sort_by: 'primary_release_date.desc',
+      'primary_release_date.lte': today,
+      'vote_count.gte': 3,
       page,
     },
   })
   return response.data.results
 }
 
-// অন্যান্য ভাষার নতুন মুভি (Latest Non-Hindi Movies)
-export const fetchLatestOtherMovies = async (page: number = 1): Promise<Movie[]> => {
+// Latest English Movies
+export const fetchLatestEnglishMovies = async (page: number = 1): Promise<Movie[]> => {
+  const today = new Date().toISOString().split('T')[0]
   const response = await tmdbApi.get<TMDBResponse<Movie>>('/discover/movie', {
     params: {
-      without_original_language: 'hi',
-      sort_by: 'release_date.desc',
-      'vote_count.gte': 10,
+      with_original_language: 'en',
+      sort_by: 'primary_release_date.desc',
+      'primary_release_date.lte': today,
+      'vote_count.gte': 3,
+      page,
+    },
+  })
+  return response.data.results
+}
+
+// Latest Other Movies
+export const fetchLatestOtherMovies = async (page: number = 1): Promise<Movie[]> => {
+  const today = new Date().toISOString().split('T')[0]
+  const response = await tmdbApi.get<TMDBResponse<Movie>>('/discover/movie', {
+    params: {
+      with_original_language: 'ko|ja|ta|te|bn|ml|mr|pa',
+      sort_by: 'primary_release_date.desc',
+      'primary_release_date.lte': today,
+      'vote_count.gte': 3,
       page,
     },
   })

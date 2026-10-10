@@ -301,7 +301,9 @@ import {
   fetchMovieImages,
   fetchExternalIds,
   fetchKeywords,
-  fetchMovieContentRatings
+  fetchMovieContentRatings,
+  getAudioLanguages,
+  isDualAudio,
 } from '../services/tmdb'
 import type { MovieDetails, Video, Credits, Movie, CollectionDetails, Keyword } from '../types/tmdb'
 import { FaImdb, FaPlay } from 'react-icons/fa'
@@ -451,6 +453,21 @@ const MovieDetailPage = () => {
                 <h3 className="text-gray-400 text-sm font-medium mb-1">Original Language</h3>
                 <p className="text-white font-semibold uppercase">{movie?.original_language}</p>
               </div>
+              {movie && (
+                <div>
+                  <h3 className="text-gray-400 text-sm font-medium mb-1">Audio Languages</h3>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="text-white font-semibold">
+                      {getAudioLanguages(movie).join(', ') || 'N/A'}
+                    </p>
+                    {isDualAudio(movie) && (
+                      <span className="rounded-full border border-green-500/30 bg-green-500/10 px-2 py-0.5 text-xs font-semibold text-green-300">
+                        Dual Audio
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
               <div>
                 <h3 className="text-gray-400 text-sm font-medium mb-1">Budget</h3>
                 <p className="text-white font-semibold">
